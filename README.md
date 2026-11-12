@@ -2,8 +2,6 @@
 # MS AAI 530 — LLM Engineering Final Project
 
 **Course:** MS AAI 530 — LLM Engineering  
-**Project:** Team Final Project  
-**Status:** To Be Determined (TBD)
 
 ## Overview
 
