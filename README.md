@@ -1,331 +1,292 @@
+# FitCheck AI
 
-# MS AAI 530 — LLM Engineering Final Project
+**An LLM-powered job application assistant with AI-assisted claim verification**
 
-**Course:** MS AAI 530 — LLM Engineering  
+MS AAI 530 (LLM Engineering) Final Team Project, Team 5
 
-## Overview
-
-This final project involves designing and building an applied Large Language Model (LLM) application that addresses a real-world need in communication, analysis, productivity, learning, or decision support.
-
-Potential applications include:
-
-- Educational assistants
-- Content-generation tools
-- Document summarization systems
-- Knowledge assistants
-- Workflow support tools
-- Evaluation assistants
-- Other approved LLM-based applications
-
-### Project Objectives
-
-The primary goal is to move beyond basic prompting and demonstrate the ability to design an applied LLM workflow that incorporates:
-
-- A clearly defined purpose and target audience
-- LLM integration within a practical use case
-- Customized prompts and instructions
-- Appropriate context management
-- Testing and evaluation
-- Responsible AI practices and human oversight
-
-The application does not need to be production-ready but must be functional enough to demonstrate meaningful LLM integration.
-
-### AI-Assisted Development
-
-This project is classified as **Level 4 on the AI Assessment Scale (AIAS)**, requiring intentional and documented use of AI tools throughout development.
-
-AI tools may support:
-
-- Ideation and project planning
-- Software development and debugging
-- Prompt engineering and refinement
-- Testing and evaluation
-- Documentation and revision
-
-The team remains responsible for understanding, modifying, evaluating, and explaining all project components.
-
-**Expected Outcome:** A portfolio-quality project demonstrating the ability to design, implement, test, document, and responsibly evaluate an LLM-enabled application or workflow.
+| | |
+|---|---|
+| **Team** | Gerek Jordan, Nathan Butcher, Nicole Rowley |
+| **Status** | Planning. Sections marked `TBD` will be filled in as development progresses. |
+| **AI use** | AIAS Level 4: AI tools are used intentionally and documented throughout development. |
 
 ---
 
-## Project Requirements
+## Table of Contents
 
-The final project must satisfy the following six requirements.
-
-### 1. Applied LLM Use Case
-
-Identify a specific real-world problem or workflow that benefits from LLM capabilities.
-
-The project must define:
-
-- The problem or user need
-- The intended audience
-- The application's purpose
-- The anticipated value or benefit
-
-### 2. LLM Integration
-
-Integrate an LLM using one of the following approaches:
-
-- Commercial API
-- Hosted model
-- Approved development platform
-- Open-source or open-weight model
-
-Document the selected model or service and explain how it supports the intended application.
-
-### 3. Prompt or Instruction Customization
-
-Implement customized instructions to shape model behavior.
-
-Possible approaches include:
-
-- System prompts
-- Role-based instructions
-- Reusable prompt templates
-- Few-shot examples
-- Structured output formats
-- Task-specific instructions
-
-Document how the prompting strategy was developed, tested, and refined.
-
-### 4. Context, Evaluation, or Safety Feature
-
-Implement **at least one feature beyond basic prompting**.
-
-Examples include:
-
-**Context Management**
-- Uploaded documents
-- Retrieved information
-- Structured inputs
-- User-provided background information
-
-**Evaluation**
-- Prompt comparisons
-- Model comparisons
-- Test cases and evaluation metrics
-- Output quality assessments
-
-**Safety and Responsible Use**
-- Content boundaries
-- Refusal conditions
-- Human review
-- AI disclosure
-- Source verification
-- Output validation
-
-### 5. Testing and Evaluation
-
-Develop a representative set of test cases or scenarios to assess application performance.
-
-Evaluation should consider:
-
-- Accuracy
-- Usefulness
-- Consistency
-- Known limitations
-- Potential risks
-- Suitability for intended users
-
-Document results and any improvements made based on testing.
-
-### 6. Documentation, AI Use, and Ethical Reflection
-
-Document the following:
-
-- Project purpose and system design
-- Implementation approach
-- Testing methodology and results
-- Known limitations and failure modes
-- Responsible AI considerations
-- AI-assisted development process
-
-Relevant ethical considerations may include privacy, bias, hallucinations, misuse, transparency, accessibility, intellectual property, and human oversight.
+1. [Project Purpose and Intended Users](#project-purpose-and-intended-users)
+2. [How It Works](#how-it-works)
+3. [LLM Model and API](#llm-model-and-api)
+4. [Prompt Customization](#prompt-customization)
+5. [Claim Verification (Safety and Evaluation Feature)](#claim-verification-safety-and-evaluation-feature)
+6. [Repository Structure](#repository-structure)
+7. [Required Tools and Services](#required-tools-and-services)
+8. [Setup](#setup)
+9. [Usage](#usage)
+10. [Data](#data)
+11. [Testing and Evaluation](#testing-and-evaluation)
+12. [Known Limitations](#known-limitations)
+13. [Responsible Use](#responsible-use)
+14. [AI-Assisted Development](#ai-assisted-development)
+15. [Reviewing This Project](#reviewing-this-project)
+16. [Team and Contributions](#team-and-contributions)
+17. [Acknowledgments](#acknowledgments)
 
 ---
 
-## Project Deliverables
+## Project Purpose and Intended Users
 
-The final submission consists of five deliverables.
+**The problem.** Tailoring a résumé to a specific job posting is slow, and students and early-career job seekers often cannot tell which of their experiences matter for a given role. General-purpose LLM tools can help, but they tend to overstate or invent qualifications, and a fabricated claim on a résumé can cost an applicant an offer.
 
-### 1. GitHub Repository
+**Intended users.** Students and early-career job seekers.
 
-Submit a GitHub repository containing the latest cleaned version of the project.
+**What FitCheck AI does.** The user provides a résumé and a job posting. The application returns:
 
-The repository must be accessible to the instructor or publicly available if intended for portfolio use.
+- A **skills-gap analysis** comparing the résumé to the posting
+- **Tailored résumé bullet suggestions**
+- **Practice interview questions** for the role
 
-#### Required Repository Contents
+**What makes it different.** Every suggested bullet is checked by a second LLM acting as a judge. The judge compares the bullet to the original résumé, labels it `supported`, `exaggerated`, or `unsupported`, and cites the résumé text it relied on. Flagged bullets are shown to the user for review before use.
 
-Include the following materials as applicable:
+**Anticipated value.** Faster, more targeted applications, with a built-in check that keeps suggestions grounded in what the applicant has actually done.
 
-- Source code, notebooks, and scripts
-- Configuration files or exported workflows
-- System prompts and prompt templates
-- Sample inputs and selected outputs
-- Screenshots or demonstration materials
-- Testing and evaluation artifacts
-- Supporting documentation
-- `README.md`
+## How It Works
 
-#### README Requirements
+```mermaid
+flowchart LR
+    A[Résumé] --> C[Generator LLM]
+    B[Job posting] --> C
+    C --> D[Skills-gap analysis]
+    C --> E[Suggested résumé bullets]
+    C --> F[Practice interview questions]
+    E --> G[Judge LLM]
+    A --> G
+    G --> H[Label per bullet<br/>supported / exaggerated / unsupported<br/>+ cited résumé evidence]
+    D --> I[User review]
+    F --> I
+    H --> I
+```
 
-The README should explain:
+1. **Input.** The user supplies résumé text and job posting text.
+2. **Generation.** A generator LLM, guided by a customized system prompt, returns structured JSON containing the gap analysis, bullet suggestions, and interview questions.
+3. **Verification.** A judge LLM receives each suggested bullet with the original résumé and returns a label and the supporting résumé excerpt.
+4. **Human review.** The user sees all outputs with the judge's flags and decides what to keep. Nothing is submitted anywhere on the user's behalf.
 
-- Project purpose and intended users
-- Repository structure
-- Setup and usage instructions
-- Required tools and services
-- LLM model or API
-- Major files and components
-- Known limitations
-- Instructions for reviewing or running the application
+## LLM Model and API
 
-For no-code or low-code projects, include relevant exported files, workflow diagrams, screenshots, configuration notes, and evaluation artifacts.
+| Role | Model / service | Why it was chosen |
+|---|---|---|
+| Generator | `TBD` | `TBD` |
+| Judge | `TBD` | `TBD` |
 
-> **Security:** Never commit API keys, credentials, or private data. Document required environment variables and configuration steps instead.
+The LLM is integrated through a commercial API. Model names, versions, and parameters (temperature, max tokens) will be recorded here and in `docs/` once selected, along with the reasoning for the choice.
 
-### 2. Project Documentation
+## Prompt Customization
 
-Submit a written report addressing:
+FitCheck AI goes beyond a single prompt by using:
 
-1. Project title, purpose, and intended users
-2. Real-world problem or use case
-3. Selected LLM, API, or platform
-4. Prompt engineering and customization strategy
-5. Context-handling, evaluation, or safety features
-6. System architecture and workflow
-7. Test cases and evaluation scenarios
-8. Testing results and iterative improvements
-9. Known limitations and failure modes
-10. Ethical and responsible-use considerations
-11. AI tools used during development
-12. Recommendations for future improvements
+- **System prompts** that define the role, the audience, and content boundaries for the generator and the judge
+- **Structured JSON output formats** so results can be parsed, displayed, and scored
+- **Reusable prompt templates** with slots for résumé and posting text
+- **Versioned prompts**, so multiple prompt versions can be compared on the same test set
 
-The report should allow an informed reader to understand what was built, why it was built, how it operates, and how effectively it performs.
+All prompts live in [`prompts/`](prompts/). Prompt iterations, the reasons for each revision, and the observed effects are recorded in the Prompt and Testing Appendix (`docs/prompt_testing_appendix.md`).
 
-### 3. Prompt and Testing Appendix
+## Claim Verification (Safety and Evaluation Feature)
 
-Provide an appendix, table, or separate file documenting:
+This is the project's feature beyond basic prompting. It serves as both a safety feature (output validation, source verification, human review) and an evaluation feature.
 
-- Major prompts and system instructions
-- Representative test cases
-- Evaluation criteria
-- Selected model outputs
-- Prompt iterations and revisions
-- Observed improvements or limitations
+| Label | Meaning |
+|---|---|
+| `supported` | The bullet is backed by text in the original résumé |
+| `exaggerated` | The bullet is based on résumé content but overstates scope, impact, or skill level |
+| `unsupported` | The bullet has no basis in the résumé |
 
-The appendix does not need to include every experimental prompt but must demonstrate meaningful testing and refinement.
+For each bullet, the judge also returns the résumé excerpt it relied on, so the user can confirm the judgment directly instead of trusting the label.
 
-### 4. AI Use and Ethical Reflection
+Because the judge is itself an LLM, its labels are validated against human labels on a hand-annotated gold set (see [Testing and Evaluation](#testing-and-evaluation)).
 
-Submit a brief reflection covering two areas.
+## Repository Structure
 
-#### AI Use During Development
+> Planned layout. This section will be updated to match the final repository.
 
-Document:
+```
+.
+├── README.md
+├── requirements.txt            # Python dependencies
+├── .env.example                # Required environment variables (no real keys)
+├── .gitignore
+├── src/                        # Application source code
+│   ├── app.*                   # User interface / entry point (TBD)
+│   ├── generator.py            # Gap analysis, bullets, interview questions
+│   ├── judge.py                # Claim verification
+│   └── schemas.py              # JSON output schemas
+├── prompts/                    # System prompts and templates, by version
+├── data/
+│   ├── samples/                # Sample résumé and job posting inputs
+│   └── test_set/               # The 40 evaluation pairs and gold annotations
+├── evaluation/
+│   ├── run_eval.py             # Runs the test set against a prompt version
+│   └── results/                # Scores, judge-vs-human agreement, comparisons
+├── outputs/                    # Selected model outputs
+├── docs/
+│   ├── project_report.*        # Written project documentation
+│   ├── prompt_testing_appendix.md
+│   ├── ai_use_ethical_reflection.md
+│   └── screenshots/            # Screenshots and demonstration materials
+└── notebooks/                  # Exploration and analysis notebooks
+```
+
+## Required Tools and Services
+
+- Python `TBD` (version)
+- An API key for the selected LLM provider (`TBD`)
+- A Kaggle account, only if you want to rebuild the test set from the source datasets
+- Dependencies listed in `requirements.txt`
+
+## Setup
+
+> These steps will be confirmed once the implementation is in place.
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/nicole-rowley-msaai/MS_AAI_530_LLM_Engineering_Final_Project.git
+cd MS_AAI_530_LLM_Engineering_Final_Project
+
+# 2. Create and activate a virtual environment
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+
+# 3. Install dependencies
+pip install -r requirements.txt
+
+# 4. Configure environment variables
+cp .env.example .env
+```
+
+Then open `.env` and add your own values:
+
+| Variable | Description |
+|---|---|
+| `LLM_API_KEY` | API key for the LLM provider (`TBD`: final variable name) |
+| `GENERATOR_MODEL` | Model used for generation |
+| `JUDGE_MODEL` | Model used for claim verification |
+
+**Security.** No API keys, credentials, or private data are committed to this repository. `.env` is listed in `.gitignore`. Do not add real résumés containing personal information.
+
+## Usage
+
+```bash
+# Run the application (TBD: final command)
+python src/app.py
+
+# Run the evaluation on the test set (TBD: final command)
+python evaluation/run_eval.py --prompt-version v1
+```
+
+A typical session:
+
+1. Paste or upload a résumé.
+2. Paste a job posting.
+3. Review the skills-gap analysis, the suggested bullets with their verification labels and cited evidence, and the practice interview questions.
+4. Edit or discard any bullet flagged `exaggerated` or `unsupported`.
+
+Sample inputs are provided in `data/samples/` so the application can be tried without personal data.
+
+## Data
+
+This project evaluates an LLM application and does not train a model, so the data serves as a test set.
+
+| Source | Description |
+|---|---|
+| [1.3M LinkedIn Jobs & Skills (2024)](https://www.kaggle.com/datasets/asaniczka/1-3m-linkedin-jobs-and-skills-2024) | About 1.3 million LinkedIn postings from 2024, with job details, description text, and extracted skills per posting |
+| [Resume Dataset](https://www.kaggle.com/datasets/snehaanbhawal/resume-dataset) | 2,484 example résumés from livecareer.com in 24 job categories (ID, résumé text, résumé HTML, category) |
+
+**Our sample:** 40 résumé and job-posting pairs across about 8 job categories, including strong matches, weak matches, and 5 deliberate mismatches.
+
+| Subset | Pairs | How it is scored |
+|---|---|---|
+| Gold set | 10 | Hand-written annotations of true skill gaps and unsupported qualifications |
+| Judge-scored set | 30 | Scored by the LLM judge, with human spot-checks on 8 |
+
+The full source datasets are not redistributed here. Download them from Kaggle under their respective licenses.
+
+## Testing and Evaluation
+
+| Question | Method | Metric |
+|---|---|---|
+| Can the judge be trusted? | Compare judge labels to human labels on the gold set | Judge-human agreement rate |
+| Are the outputs relevant? | Score outputs against the job posting across all 40 pairs | Relevance |
+| Are the outputs stable? | Repeat runs on the same inputs | Consistency |
+| Does the system invent qualifications? | Count bullets labeled `unsupported` | Unsupported-claim rate |
+| Which prompts work best? | Run multiple prompt versions on the same test set | Side-by-side comparison of the metrics above |
+| Does it behave sensibly on bad fits? | 5 deliberate résumé-posting mismatches | Qualitative review |
+
+### Results
+
+`TBD`. Results, prompt-version comparisons, and the improvements made in response to testing will be summarized here, with full artifacts in `evaluation/results/`.
+
+## Known Limitations
+
+- **The judge is an LLM.** It can mislabel bullets, and it may share blind spots with the generator. Its labels are an aid to review, not a guarantee.
+- **Hallucination.** The generator can still produce exaggerated or unsupported claims. Verification reduces this risk but does not remove it.
+- **Small test set.** 40 pairs across about 8 job categories cannot represent every field, seniority level, or résumé style.
+- **Dataset fit.** Source résumés come from a single site and postings from a single platform and year, so results may not generalize.
+- **Text only.** Résumé formatting, layout, and non-text content are not evaluated.
+- **Not career advice.** Outputs are suggestions and do not predict hiring outcomes.
+
+Additional failure modes found during testing will be added here.
+
+## Responsible Use
+
+- **Human oversight.** The user reviews every output. FitCheck AI never submits applications or edits a résumé on its own.
+- **Transparency.** All suggestions are labeled as AI-generated, and judge labels are shown with the evidence behind them.
+- **Privacy.** Résumés contain personal information. Résumé text is sent to a third-party LLM API, so users should remove details they do not want shared. The application does not store résumés (`TBD`: confirm against final implementation).
+- **Honesty in applications.** The tool is designed to help users present real experience well, and flagged bullets should not be used without correction.
+- **Bias and fairness.** LLM suggestions may reflect biases about roles, industries, or backgrounds. Performance across job categories is examined during evaluation.
+- **Over-reliance.** A `supported` label means the judge found matching résumé text. The user is still responsible for the accuracy of their résumé.
+
+A fuller discussion is in `docs/ai_use_ethical_reflection.md`.
+
+## AI-Assisted Development
+
+This project is AIAS Level 4, so AI tools are used throughout and documented. The reflection in `docs/ai_use_ethical_reflection.md` records:
 
 - AI tools and models used
-- How AI supported development
+- How AI supported ideation, coding, prompt refinement, testing, and documentation
 - How AI-generated suggestions were verified
 - Which suggestions were modified or rejected
-- How human judgment influenced final decisions
+- How human judgment shaped final decisions
 
-#### Ethical and Responsible AI Considerations
+The team is responsible for understanding, modifying, evaluating, and explaining every component.
 
-Address risks relevant to the application, such as:
+## Reviewing This Project
 
-- Hallucinated or inaccurate information
-- Over-reliance on AI-generated outputs
-- Privacy and sensitive data
-- Bias and fairness
-- Accessibility
-- Transparency and disclosure
-- Copyright and intellectual property
-- Potential misuse
-- Human oversight
+For instructors and reviewers, the course deliverables are located as follows:
 
-This reflection may be included in the main project documentation or submitted separately.
+| Deliverable | Location |
+|---|---|
+| Source code and configuration | `src/`, `requirements.txt`, `.env.example` |
+| System prompts and templates | `prompts/` |
+| Sample inputs and selected outputs | `data/samples/`, `outputs/` |
+| Testing and evaluation artifacts | `evaluation/`, `data/test_set/` |
+| Project documentation (report) | `docs/project_report.*` |
+| Prompt and Testing Appendix | `docs/prompt_testing_appendix.md` |
+| AI Use and Ethical Reflection | `docs/ai_use_ethical_reflection.md` |
+| Screenshots and demo materials | `docs/screenshots/` |
+| Recorded presentation and demo | `TBD` (link) |
 
-### 5. Final Presentation and Demonstration
+To run the application yourself, follow [Setup](#setup) and [Usage](#usage). To review without running it, see the selected outputs in `outputs/` and the evaluation results in `evaluation/results/`.
 
-Submit a **recorded presentation lasting approximately 10–15 minutes**.
+## Team and Contributions
 
-#### Part 1: Project Introduction (Maximum 5 Minutes)
+| Team member | Contributions |
+|---|---|
+| Gerek Jordan | `TBD` |
+| Nathan Butcher | `TBD` |
+| Nicole Rowley | `TBD` |
 
-Present a concise overview covering:
+## Acknowledgments
 
-- Problem statement
-- Target users
-- Project design
-- LLM integration
-- Prompt customization
-- Evaluation methodology
-- Key limitations
-- Responsible-use considerations
-
-#### Part 2: Application Demonstration (Minimum 5 Minutes)
-
-Demonstrate the functioning application using an appropriate interface, such as:
-
-- Web application or frontend
-- Hosted application
-- Jupyter notebook
-- Command-line interface
-- API calls
-- No-code or low-code workflow
-- Code walkthrough with representative inputs and outputs
-
-The demonstration should show:
-
-1. The user or stakeholder experience
-2. How the LLM is integrated
-3. How prompts influence outputs
-4. Context-handling, evaluation, or safety features
-5. At least one representative test case
-6. Remaining limitations or failure modes
-7. Opportunities for future improvements
-
-The emphasis should be on **showing the application in action**, rather than describing its functionality alone.
-
----
-
-## Submission Checklist
-
-### Application Development
-
-- [ ] Define the problem and target users
-- [ ] Select and integrate an LLM
-- [ ] Implement customized prompts or instructions
-- [ ] Add a context, evaluation, or safety feature
-- [ ] Develop representative test cases
-- [ ] Evaluate results and refine the application
-
-### Repository and Documentation
-
-- [ ] Clean and organize the GitHub repository
-- [ ] Include source code and configuration files
-- [ ] Document prompts and system instructions
-- [ ] Include testing and evaluation artifacts
-- [ ] Complete the README
-- [ ] Remove credentials and sensitive data
-- [ ] Complete the written project report
-- [ ] Prepare the prompt and testing appendix
-- [ ] Complete the AI use and ethical reflection
-
-### Final Presentation
-
-- [ ] Record project introduction (5 minutes maximum)
-- [ ] Record functional demonstration (5 minutes minimum)
-- [ ] Demonstrate at least one representative test case
-- [ ] Discuss limitations and future improvements
-- [ ] Verify recording and repository accessibility
-- [ ] Submit the final project package
-
----
-
-## Project Status
-
-**Current Stage:** Planning / TBD
-
-Project-specific details, implementation decisions, architecture, evaluation results, and demonstration materials will be added as development progresses.
+- Kaggle dataset authors: asaniczka (1.3M LinkedIn Jobs & Skills, 2024) and Snehaan Bhawal (Resume Dataset)
+- MS AAI 530, LLM Engineering
