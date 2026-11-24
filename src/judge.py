@@ -13,9 +13,14 @@ from src.schemas import BulletVerdict, JudgeResult, ResumeSuggestion
 load_dotenv()
 
 
-# Use the configured model or the default judge model. A different model
-# from the assistant reduces the chance that both share the same blind spots.
-JUDGE_MODEL = os.getenv("JUDGE_MODEL", "gpt-4.1")
+# Use the configured model or the default judge model. The judge is a
+# Google Gemini model, while the assistant is an OpenAI model, which reduces
+# the chance that both share the same blind spots.
+JUDGE_MODEL = os.getenv("JUDGE_MODEL", "gemini-3.8-flash")
+
+# Gemini is called through Google's OpenAI-compatible endpoint, so the
+# OpenAI library is used with a Gemini API key and this base URL.
+GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
 
 
 # Lowercase text and collapse whitespace so PDF line breaks do not matter.
@@ -45,34 +50,41 @@ def judge_suggestions(
     if not suggestions:
         return JudgeResult(verdicts=[])
 
-    if not os.getenv("OPENAI_API_KEY"):
-        raise ValueError("OPENAI_API_KEY is missing from the .env file.")
+    gemini_api_key = os.getenv("GEMINI_API_KEY")
+
+    if not gemini_api_key:
+        raise ValueError("GEMINI_API_KEY is missing from the .env file.")
 
     bullets = "\n".join(
         f"[{index}] {suggestion.suggested_text}"
         for index, suggestion in enumerate(suggestions)
     )
 
-    client = OpenAI()
+    client = OpenAI(api_key=gemini_api_key, base_url=GEMINI_BASE_URL)
 
-    # Temperature 0 keeps repeated runs as consistent as possible. Remove it
-    # if JUDGE_MODEL is set to a model that does not accept temperature.
-    response = client.responses.parse(
+    # Temperature is left at the model default for Gemini. Measure the
+    # judge's consistency by repeating runs instead of assuming it.
+    completion = client.chat.completions.parse(
         model=JUDGE_MODEL,
-        instructions=JUDGE_PROMPT,
-        input=(
-            f"<resume>\n{resume}\n</resume>\n\n"
-            f"<bullets>\n{bullets}\n</bullets>"
-        ),
-        text_format=JudgeResult,
-        temperature=0,
-        store=False,
+        messages=[
+            {"role": "system", "content": JUDGE_PROMPT},
+            {
+                "role": "user",
+                "content": (
+                    f"<resume>\n{resume}\n</resume>\n\n"
+                    f"<bullets>\n{bullets}\n</bullets>"
+                ),
+            },
+        ],
+        response_format=JudgeResult,
     )
 
-    if response.output_parsed is None:
+    judge_result = completion.choices[0].message.parsed
+
+    if judge_result is None:
         raise ValueError("The judge did not return a valid structured response.")
 
-    return response.output_parsed
+    return judge_result
 
 
 # Map bullet number to verdict. Bullets the judge skipped are left out,

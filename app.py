@@ -83,7 +83,8 @@ with st.sidebar:
     analyze_clicked = st.button("Analyze application", type="primary")
 
     st.info(
-        "Your resume and the job posting are sent to OpenAI for analysis. "
+        "Your resume and the job posting are sent to OpenAI for analysis, "
+        "and your resume is also sent to Google Gemini for verification. "
         "This app does not save them. Remove any details you do not want "
         "to share."
     )
@@ -151,8 +152,8 @@ if analyze_clicked:
         # Keep technical details in the server log, not on the page.
         logging.exception("FitCheck AI analysis failed")
         st.error(
-            "Something went wrong while contacting the AI service. "
-            "Check your API key and connection, then try again."
+            "Something went wrong while contacting the AI services. "
+            "Check your API keys and connection, then try again."
         )
 
 
