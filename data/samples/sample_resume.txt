@@ -1,0 +1,26 @@
+Jordan Avery
+jordan.avery@example.com | San Diego, CA
+
+EDUCATION
+B.S. in Business Administration, Coastal State University, May 2026
+Relevant coursework: Statistics, Business Analytics, Marketing Research
+
+EXPERIENCE
+Sales Associate, Campus Bookstore, Coastal State University
+August 2024 to May 2026
+- Helped build weekly sales reports in Excel for the store manager.
+- Answered customer questions at the service desk.
+- Counted inventory at the end of each semester and entered totals into a spreadsheet.
+
+Marketing Intern, Harbor Coffee Roasters
+June 2025 to August 2025
+- Scheduled social media posts and tracked likes and comments in a spreadsheet.
+- Sat in on weekly marketing meetings and took notes.
+
+PROJECTS
+Capstone Project, Business Analytics
+- Member of a four-person team that analyzed student survey data in Python.
+- Created charts for a class presentation on campus dining trends.
+
+SKILLS
+Excel (pivot tables, VLOOKUP), basic Python (pandas), PowerPoint
