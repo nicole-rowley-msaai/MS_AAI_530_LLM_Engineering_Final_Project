@@ -17,3 +17,7 @@ outputs/*
 # System / editor files
 .DS_Store
 .vscode/
+
+# Agent skill links created by Streamlit (local only)
+.agents/
+.claude/
