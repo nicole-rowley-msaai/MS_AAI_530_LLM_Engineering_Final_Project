@@ -2,11 +2,19 @@
 from io import BytesIO
 
 from pypdf import PdfReader
+from pypdf.errors import PyPdfError
 
 
 # Extract readable text from an uploaded PDF file.
 def extract_pdf_text(uploaded_file) -> str:
-    pdf = PdfReader(BytesIO(uploaded_file.getvalue()))
+    try:
+        pdf = PdfReader(BytesIO(uploaded_file.getvalue()))
+    except PyPdfError as error:
+        raise ValueError("This file could not be read as a PDF.") from error
+
+    # Reject password-protected PDFs.
+    if pdf.is_encrypted:
+        raise ValueError("Password-protected PDFs are not supported.")
 
     # Limit PDF uploads to 15 pages.
     if len(pdf.pages) > 15:
@@ -24,4 +32,3 @@ def extract_pdf_text(uploaded_file) -> str:
         )
 
     return text.strip()
-

@@ -1,0 +1,26 @@
+Junior Data Analyst
+Brightline Retail Group | San Diego, CA | Full-time
+
+About the role
+We are looking for a Junior Data Analyst to join our merchandising analytics
+team. You will turn sales and inventory data into reports and dashboards that
+help store leaders make decisions.
+
+Responsibilities
+- Build and maintain weekly and monthly sales reports.
+- Write SQL queries to pull data from our data warehouse.
+- Design Tableau dashboards for store and regional managers.
+- Present findings to non-technical stakeholders.
+- Lead small analysis projects from question to recommendation.
+
+Requirements
+- Bachelor's degree in business, statistics, or a related field.
+- Proficiency in SQL.
+- Experience with Tableau or Power BI.
+- Advanced Excel skills.
+- Strong written and verbal communication skills.
+
+Nice to have
+- Experience with Python or R.
+- Retail or e-commerce experience.
+- Experience leading a team or project.
